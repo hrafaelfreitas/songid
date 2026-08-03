@@ -7,7 +7,6 @@
   <title>Song ID — Editorial Experience</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,41 +42,24 @@
     }
 
     /* --- BUTTON EFFECTS --- */
-
     @keyframes pulse-wave {
       0% {
         transform: scale(0.95);
         opacity: 0.8;
       }
-
       100% {
         transform: scale(1.6);
         opacity: 0;
       }
     }
 
-    .listening-active .wave-1 {
-      animation: pulse-wave 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
-    }
-
-    .listening-active .wave-2 {
-      animation: pulse-wave 2s cubic-bezier(0, 0.2, 0.8, 1) infinite 0.6s;
-    }
-
-    .listening-active .wave-3 {
-      animation: pulse-wave 2s cubic-bezier(0, 0.2, 0.8, 1) infinite 1.2s;
-    }
+    .listening-active .wave-1 { animation: pulse-wave 2s cubic-bezier(0, 0.2, 0.8, 1) infinite; }
+    .listening-active .wave-2 { animation: pulse-wave 2s cubic-bezier(0, 0.2, 0.8, 1) infinite 0.6s; }
+    .listening-active .wave-3 { animation: pulse-wave 2s cubic-bezier(0, 0.2, 0.8, 1) infinite 1.2s; }
 
     @keyframes mic-float {
-
-      0%,
-      100% {
-        transform: translateY(0) scale(1);
-      }
-
-      50% {
-        transform: translateY(-4px) scale(1.1);
-      }
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-4px) scale(1.1); }
     }
 
     .listening-active #mic-icon {
@@ -86,14 +68,8 @@
     }
 
     /* Custom Scrollbar */
-    .custom-scroll::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    .custom-scroll::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
+    .custom-scroll::-webkit-scrollbar { width: 4px; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
     .custom-scroll::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.15);
       border-radius: 4px;
@@ -101,15 +77,12 @@
   </style>
 </head>
 
-<body
-  class="text-slate-100 min-h-screen flex flex-col justify-between px-4 py-3 sm:px-8 sm:py-4 lg:px-10 max-w-[1920px] mx-auto select-none overflow-x-hidden">
+<body class="text-slate-100 min-h-screen flex flex-col justify-between px-4 py-3 sm:px-8 sm:py-4 lg:px-10 max-w-[1920px] mx-auto select-none overflow-x-hidden">
 
   <header class="flex justify-between items-center border-b border-white/10 pb-2.5">
     <div class="flex items-center gap-4 sm:gap-6">
-      <h1 class="text-lg sm:text-xl tracking-[0.2em] font-light uppercase text-white/90">SONG<span
-          class="font-bold accent-text">.ID</span></h1>
-      <div id="status-badge"
-        class="flex items-center gap-2 text-[10px] sm:text-xs tracking-wider uppercase text-white/50 border border-white/10 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full backdrop-blur-md">
+      <h1 class="text-lg sm:text-xl tracking-[0.2em] font-light uppercase text-white/90">SONG<span class="font-bold accent-text">.ID</span></h1>
+      <div id="status-badge" class="flex items-center gap-2 text-[10px] sm:text-xs tracking-wider uppercase text-white/50 border border-white/10 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full backdrop-blur-md">
         <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
         <span id="status-text">Ready</span>
       </div>
@@ -118,67 +91,44 @@
 
   <main class="flex-1 w-full">
 
-    <div id="listen-screen"
-      class="flex flex-col items-center justify-center gap-8 py-20 min-h-[calc(100vh-140px)] text-center">
-
+    <div id="listen-screen" class="flex flex-col items-center justify-center gap-8 py-20 min-h-[calc(100vh-140px)] text-center">
       <div id="button-wrapper" class="relative flex items-center justify-center">
-        <div
-          class="wave-1 absolute w-44 h-44 sm:w-56 sm:h-56 rounded-full border border-indigo-500/40 opacity-0 pointer-events-none">
-        </div>
-        <div
-          class="wave-2 absolute w-44 h-44 sm:w-56 sm:h-56 rounded-full border border-indigo-400/30 opacity-0 pointer-events-none">
-        </div>
-        <div
-          class="wave-3 absolute w-44 h-44 sm:w-56 sm:h-56 rounded-full border border-white/20 opacity-0 pointer-events-none">
-        </div>
+        <div class="wave-1 absolute w-44 h-44 sm:w-56 sm:h-56 rounded-full border border-indigo-500/40 opacity-0 pointer-events-none"></div>
+        <div class="wave-2 absolute w-44 h-44 sm:w-56 sm:h-56 rounded-full border border-indigo-400/30 opacity-0 pointer-events-none"></div>
+        <div class="wave-3 absolute w-44 h-44 sm:w-56 sm:h-56 rounded-full border border-white/20 opacity-0 pointer-events-none"></div>
 
-        <button id="btn-listen"
-          class="relative z-10 w-44 h-44 sm:w-56 sm:h-56 rounded-full border border-white/20 hover:border-white/60 bg-white/5 hover:bg-white/10 active:scale-95 transition-all duration-500 flex flex-col items-center justify-center gap-3 cursor-pointer group backdrop-blur-md shadow-2xl">
-          <svg id="mic-icon" xmlns="http://www.w3.org/2000/svg"
-            class="h-10 w-10 sm:h-12 sm:w-12 text-white/80 group-hover:scale-110 transition-transform duration-500 stroke-[1.5]"
-            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 016 0v6a3 3 0 01-3 3z" />
+        <button id="btn-listen" class="relative z-10 w-44 h-44 sm:w-56 sm:h-56 rounded-full border border-white/20 hover:border-white/60 bg-white/5 hover:bg-white/10 active:scale-95 transition-all duration-500 flex flex-col items-center justify-center gap-3 cursor-pointer group backdrop-blur-md shadow-2xl">
+          <svg id="mic-icon" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12 text-white/80 group-hover:scale-110 transition-transform duration-500 stroke-[1.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 016 0v6a3 3 0 01-3 3z" />
           </svg>
           <span id="btn-text" class="font-light text-xs uppercase tracking-[0.25em] text-white/90">Listen</span>
         </button>
       </div>
 
-      <p id="listen-subtitle"
-        class="text-xs sm:text-sm font-light text-white/50 max-w-sm leading-relaxed transition-opacity duration-300">
+      <p id="listen-subtitle" class="text-xs sm:text-sm font-light text-white/50 max-w-sm leading-relaxed transition-opacity duration-300">
         Tap the button to listen to the environment and identify the song.
       </p>
     </div>
 
-    <div id="result-screen"
-      class="hidden w-full mt-2 sm:mt-4 flex flex-col lg:flex-row gap-6 lg:gap-8 items-start justify-center h-[calc(100vh-120px)]">
+    <div id="result-screen" class="hidden w-full mt-2 sm:mt-4 flex flex-col lg:flex-row gap-6 lg:gap-8 items-start justify-center h-[calc(100vh-120px)]">
 
       <div class="w-full lg:w-4/12 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 pt-2">
         <div class="relative group">
-          <img id="album-cover" crossorigin="anonymous" src="" alt="Album Cover"
-            class="w-44 h-44 sm:w-56 sm:h-56 lg:w-[300px] lg:h-[300px] xl:w-[340px] xl:h-[340px] rounded-lg shadow-2xl object-cover border border-white/10 transition-all duration-1000">
+          <img id="album-cover" crossorigin="anonymous" src="" alt="Album Cover" class="w-44 h-44 sm:w-56 sm:h-56 lg:w-[300px] lg:h-[300px] xl:w-[340px] xl:h-[340px] rounded-lg shadow-2xl object-cover border border-white/10 transition-all duration-1000">
         </div>
 
         <div class="space-y-1 max-w-md">
-          <h2 id="song-title"
-            class="font-serif-title text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-white leading-snug line-clamp-2">
-            Title</h2>
-          <p id="artist-name" class="text-sm sm:text-base font-light text-white/70 tracking-wide line-clamp-1">Artist
-          </p>
+          <h2 id="song-title" class="font-serif-title text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-white leading-snug line-clamp-2">Title</h2>
+          <p id="artist-name" class="text-sm sm:text-base font-light text-white/70 tracking-wide line-clamp-1">Artist</p>
         </div>
 
-        <button id="btn-reset"
-          class="px-5 py-1.5 rounded-full border border-white/20 hover:bg-white/10 text-[10px] sm:text-xs uppercase tracking-widest text-white/80 transition duration-300 cursor-pointer">
+        <button id="btn-reset" class="px-5 py-1.5 rounded-full border border-white/20 hover:bg-white/10 text-[10px] sm:text-xs uppercase tracking-widest text-white/80 transition duration-300 cursor-pointer">
           Listen to another song
         </button>
       </div>
 
-      <div
-        class="w-full lg:w-8/12 h-full bg-black/20 backdrop-blur-md rounded-xl p-5 sm:p-8 border border-white/10 overflow-y-auto custom-scroll flex flex-col">
-        <pre id="lyrics-text"
-          class="whitespace-pre-wrap font-lyrics text-base sm:text-lg lg:text-xl leading-relaxed text-white/90 font-light flex-1">
-Fetching lyrics...
-        </pre>
+      <div class="w-full lg:w-8/12 h-full bg-black/20 backdrop-blur-md rounded-xl p-5 sm:p-8 border border-white/10 overflow-y-auto custom-scroll flex flex-col">
+        <pre id="lyrics-text" class="whitespace-pre-wrap font-lyrics text-base sm:text-lg lg:text-xl leading-relaxed text-white/90 font-light flex-1">Fetching lyrics...</pre>
       </div>
 
     </div>
@@ -186,11 +136,11 @@ Fetching lyrics...
   </main>
 
   <footer class="pt-4 pb-1 text-left">
-    <span class="text-[10px] sm:text-xs text-white/30 font-mono tracking-widest uppercase">v 1.0</span>
+    <span class="text-[10px] sm:text-xs text-white/30 font-mono tracking-widest uppercase">v 1.1</span>
   </footer>
 
   <script>
-    const AUDD_TOKEN = "33845092005c657325526d2fed45e5cb"; // Replace with your AudD Token
+    const AUDD_TOKEN = "33845092005c657325526d2fed45e5cb";
     const RECORD_TIME_MS = 5000;
 
     const colorThief = new ColorThief();
@@ -214,6 +164,12 @@ Fetching lyrics...
 
     let isRecording = false;
 
+    // Checks HTTPS on startup
+    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      console.warn('Microphone access requires HTTPS on mobile devices.');
+      listenSubtitle.innerText = "Warning: Microphone requires HTTPS to work on Android/Mobile.";
+    }
+
     // --- EVENT LISTENERS ---
 
     btnListen.addEventListener('click', () => {
@@ -230,6 +186,24 @@ Fetching lyrics...
         applyDynamicTheme(albumCover);
       }
     });
+
+    // --- HELPER FOR AUDIO FORMAT ON ANDROID ---
+
+    function getSupportedMimeType() {
+      const types = [
+        'audio/webm',
+        'audio/webm;codecs=opus',
+        'audio/mp4',
+        'audio/ogg;codecs=opus',
+        'audio/aac'
+      ];
+      for (const type of types) {
+        if (MediaRecorder.isTypeSupported(type)) {
+          return type;
+        }
+      }
+      return ''; // Default browser selection
+    }
 
     // --- DYNAMIC THEMES ---
 
@@ -267,21 +241,26 @@ Fetching lyrics...
 
       const audioBlob = await recordAudio(RECORD_TIME_MS);
 
+      if (!audioBlob) {
+        buttonWrapper.classList.remove('listening-active');
+        btnText.innerText = "Listen";
+        btnListen.classList.remove('border-indigo-500/80', 'bg-indigo-500/10');
+        return;
+      }
+
       btnText.innerText = "Analyzing...";
       listenSubtitle.innerText = "Processing audio sample...";
       updateStatus('Analyzing...', 'bg-amber-400 animate-pulse');
 
-      if (audioBlob) {
-        const song = await identifySongAudD(audioBlob);
+      const song = await identifySongAudD(audioBlob);
 
-        if (song) {
-          await displaySongData(song);
-          updateStatus('Identified', 'bg-emerald-400');
-        } else {
-          updateStatus('Not recognized', 'bg-rose-500');
-          listenSubtitle.innerText = "Could not recognize the song. Please try again.";
-          setTimeout(() => updateStatus('Ready', 'bg-white/40'), 3000);
-        }
+      if (song) {
+        await displaySongData(song);
+        updateStatus('Identified', 'bg-emerald-400');
+      } else {
+        updateStatus('Not recognized', 'bg-rose-500');
+        listenSubtitle.innerText = "Could not recognize the song. Please try again.";
+        setTimeout(() => updateStatus('Ready', 'bg-white/40'), 3000);
       }
 
       buttonWrapper.classList.remove('listening-active');
@@ -293,30 +272,49 @@ Fetching lyrics...
 
     function recordAudio(duration) {
       return new Promise((resolve) => {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          alert('Audio recording is not supported in this browser or environment (requires HTTPS).');
+          updateStatus('Not Supported', 'bg-rose-500');
+          resolve(null);
+          return;
+        }
+
         isRecording = true;
         navigator.mediaDevices.getUserMedia({ audio: true })
           .then((stream) => {
-            const mediaRecorder = new MediaRecorder(stream);
+            const mimeType = getSupportedMimeType();
+            const options = mimeType ? { mimeType } : {};
+            const mediaRecorder = new MediaRecorder(stream, options);
             const audioChunks = [];
 
             mediaRecorder.addEventListener('dataavailable', (event) => {
-              audioChunks.push(event.data);
+              if (event.data.size > 0) audioChunks.push(event.data);
             });
 
             mediaRecorder.addEventListener('stop', () => {
               isRecording = false;
               stream.getTracks().forEach(track => track.stop());
-              const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+              const audioBlob = new Blob(audioChunks, { type: mimeType || 'audio/webm' });
               resolve(audioBlob);
             });
 
             mediaRecorder.start();
-            setTimeout(() => mediaRecorder.stop(), duration);
+            setTimeout(() => {
+              if (mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+            }, duration);
           })
           .catch((err) => {
             console.error('Microphone error:', err);
-            updateStatus('Mic Error', 'bg-rose-500');
             isRecording = false;
+
+            if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+              listenSubtitle.innerText = "Microphone permission denied. Please allow mic access in your browser settings.";
+              updateStatus('Mic Denied', 'bg-rose-500');
+            } else {
+              listenSubtitle.innerText = "Error accessing microphone. Make sure you are using HTTPS.";
+              updateStatus('Mic Error', 'bg-rose-500');
+            }
+
             resolve(null);
           });
       });
@@ -327,7 +325,7 @@ Fetching lyrics...
     async function identifySongAudD(audioBlob) {
       const formData = new FormData();
       formData.append('api_token', AUDD_TOKEN);
-      formData.append('file', audioBlob, 'audio.wav');
+      formData.append('file', audioBlob, 'audio_sample');
       formData.append('return', 'spotify');
 
       try {
