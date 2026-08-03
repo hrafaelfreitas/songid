@@ -136,12 +136,12 @@
   </main>
 
   <footer class="pt-4 pb-1 text-left">
-    <span class="text-[10px] sm:text-xs text-white/30 font-mono tracking-widest uppercase">v 1.2</span>
+    <span class="text-[10px] sm:text-xs text-white/30 font-mono tracking-widest uppercase">v 1.3</span>
   </footer>
 
   <script>
     const AUDD_TOKEN = "33845092005c657325526d2fed45e5cb";
-    const RECORD_TIME_MS = 6000; // Increased to 6 seconds for better accuracy
+    const RECORD_TIME_MS = 6000;
 
     const colorThief = new ColorThief();
 
@@ -280,9 +280,23 @@
         isRecording = true;
         const config = getAudioRecordingConfig();
 
-        navigator.mediaDevices.getUserMedia({ audio: true })
+        // High quality audio constraints to prevent Android phone mic filters
+        const audioConstraints = {
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+            sampleRate: 44100
+          }
+        };
+
+        navigator.mediaDevices.getUserMedia(audioConstraints)
           .then((stream) => {
-            const options = config.mime ? { mimeType: config.mime } : {};
+            const options = {
+              audioBitsPerSecond: 128000
+            };
+            if (config.mime) options.mimeType = config.mime;
+
             const mediaRecorder = new MediaRecorder(stream, options);
             const audioChunks = [];
 
@@ -299,7 +313,6 @@
               resolve({ blob: audioBlob, ext: config.ext });
             });
 
-            // Pass 500ms timeslice to force frequent data events on Android
             mediaRecorder.start(500);
 
             setTimeout(() => {
