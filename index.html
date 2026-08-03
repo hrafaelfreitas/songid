@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
@@ -42,7 +42,7 @@
       transition: color 1.2s ease;
     }
 
-    /* --- EFEITOS DO BOTÃO --- */
+    /* --- BUTTON EFFECTS --- */
 
     @keyframes pulse-wave {
       0% {
@@ -111,7 +111,7 @@
       <div id="status-badge"
         class="flex items-center gap-2 text-[10px] sm:text-xs tracking-wider uppercase text-white/50 border border-white/10 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full backdrop-blur-md">
         <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
-        <span id="status-text">Pronto</span>
+        <span id="status-text">Ready</span>
       </div>
     </div>
   </header>
@@ -146,7 +146,7 @@
 
       <p id="listen-subtitle"
         class="text-xs sm:text-sm font-light text-white/50 max-w-sm leading-relaxed transition-opacity duration-300">
-        Toque no botão para ouvir o ambiente e identificar a música.
+        Tap the button to listen to the environment and identify the song.
       </p>
     </div>
 
@@ -155,7 +155,7 @@
 
       <div class="w-full lg:w-4/12 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 pt-2">
         <div class="relative group">
-          <img id="album-cover" crossorigin="anonymous" src="" alt="Capa do Álbum"
+          <img id="album-cover" crossorigin="anonymous" src="" alt="Album Cover"
             class="w-44 h-44 sm:w-56 sm:h-56 lg:w-[300px] lg:h-[300px] xl:w-[340px] xl:h-[340px] rounded-lg shadow-2xl object-cover border border-white/10 transition-all duration-1000">
         </div>
 
@@ -169,7 +169,7 @@
 
         <button id="btn-reset"
           class="px-5 py-1.5 rounded-full border border-white/20 hover:bg-white/10 text-[10px] sm:text-xs uppercase tracking-widest text-white/80 transition duration-300 cursor-pointer">
-          Ouvir outra música
+          Listen to another song
         </button>
       </div>
 
@@ -177,7 +177,7 @@
         class="w-full lg:w-8/12 h-full bg-black/20 backdrop-blur-md rounded-xl p-5 sm:p-8 border border-white/10 overflow-y-auto custom-scroll flex flex-col">
         <pre id="lyrics-text"
           class="whitespace-pre-wrap font-lyrics text-base sm:text-lg lg:text-xl leading-relaxed text-white/90 font-light flex-1">
-Buscando letra...
+Fetching lyrics...
         </pre>
       </div>
 
@@ -186,7 +186,7 @@ Buscando letra...
   </main>
 
   <script>
-    const AUDD_TOKEN = "33845092005c657325526d2fed45e5cb"; // Substitua pelo seu Token da AudD
+    const AUDD_TOKEN = "33845092005c657325526d2fed45e5cb"; // Replace with your AudD Token
     const RECORD_TIME_MS = 5000;
 
     const colorThief = new ColorThief();
@@ -227,7 +227,7 @@ Buscando letra...
       }
     });
 
-    // --- TEMAS DINÂMICOS ---
+    // --- DYNAMIC THEMES ---
 
     function applyDynamicTheme(imgElement) {
       try {
@@ -240,7 +240,7 @@ Buscando letra...
         document.documentElement.style.setProperty('--bg-color', darkBg);
         document.documentElement.style.setProperty('--accent-color', accentColor);
       } catch (err) {
-        console.warn('Erro ao extrair cores:', err);
+        console.warn('Error extracting colors:', err);
       }
     }
 
@@ -249,34 +249,34 @@ Buscando letra...
       document.documentElement.style.setProperty('--accent-color', '#6366f1');
     }
 
-    // --- RECONHECIMENTO ---
+    // --- RECOGNITION ---
 
     async function startSingleRecognition() {
       showListenScreen();
 
       buttonWrapper.classList.add('listening-active');
       btnText.innerText = "Listening...";
-      listenSubtitle.innerText = "Escutando o ambiente ao redor...";
+      listenSubtitle.innerText = "Listening to ambient sound...";
       btnListen.classList.add('border-indigo-500/80', 'bg-indigo-500/10');
 
-      updateStatus('Escutando...', 'bg-indigo-400 animate-ping');
+      updateStatus('Listening...', 'bg-indigo-400 animate-ping');
 
       const audioBlob = await recordAudio(RECORD_TIME_MS);
 
       btnText.innerText = "Analyzing...";
-      listenSubtitle.innerText = "Processando amostra de áudio...";
-      updateStatus('Analisando...', 'bg-amber-400 animate-pulse');
+      listenSubtitle.innerText = "Processing audio sample...";
+      updateStatus('Analyzing...', 'bg-amber-400 animate-pulse');
 
       if (audioBlob) {
         const song = await identifySongAudD(audioBlob);
 
         if (song) {
           await displaySongData(song);
-          updateStatus('Identificado', 'bg-emerald-400');
+          updateStatus('Identified', 'bg-emerald-400');
         } else {
-          updateStatus('Não reconhecido', 'bg-rose-500');
-          listenSubtitle.innerText = "Não foi possível reconhecer a música. Tente novamente.";
-          setTimeout(() => updateStatus('Pronto', 'bg-white/40'), 3000);
+          updateStatus('Not recognized', 'bg-rose-500');
+          listenSubtitle.innerText = "Could not recognize the song. Please try again.";
+          setTimeout(() => updateStatus('Ready', 'bg-white/40'), 3000);
         }
       }
 
@@ -285,7 +285,7 @@ Buscando letra...
       btnListen.classList.remove('border-indigo-500/80', 'bg-indigo-500/10');
     }
 
-    // --- GRAVAÇÃO ---
+    // --- RECORDING ---
 
     function recordAudio(duration) {
       return new Promise((resolve) => {
@@ -310,8 +310,8 @@ Buscando letra...
             setTimeout(() => mediaRecorder.stop(), duration);
           })
           .catch((err) => {
-            console.error('Erro no microfone:', err);
-            updateStatus('Erro Mic', 'bg-rose-500');
+            console.error('Microphone error:', err);
+            updateStatus('Mic Error', 'bg-rose-500');
             isRecording = false;
             resolve(null);
           });
@@ -342,7 +342,7 @@ Buscando letra...
         }
         return null;
       } catch (err) {
-        console.error('Erro na API AudD:', err);
+        console.error('AudD API error:', err);
         return null;
       }
     }
@@ -351,13 +351,13 @@ Buscando letra...
       try {
         const url = `https://lrclib.net/api/get?artist_name=${encodeURIComponent(artist)}&track_name=${encodeURIComponent(title)}`;
         const response = await fetch(url);
-        if (!response.ok) return "Letra não encontrada para esta faixa.";
+        if (!response.ok) return "Lyrics not found for this track.";
 
         const data = await response.json();
-        return data.plainLyrics || data.syncedLyrics || "Letra indisponível.";
+        return data.plainLyrics || data.syncedLyrics || "Lyrics unavailable.";
       } catch (err) {
-        console.error('Erro ao buscar letra:', err);
-        return "Erro ao carregar a letra.";
+        console.error('Error fetching lyrics:', err);
+        return "Error loading lyrics.";
       }
     }
 
@@ -366,7 +366,7 @@ Buscando letra...
     async function displaySongData(song) {
       songTitle.innerText = song.title;
       artistName.innerText = song.artist;
-      lyricsText.innerText = "Buscando letra...";
+      lyricsText.innerText = "Fetching lyrics...";
 
       albumCover.src = song.cover;
 
