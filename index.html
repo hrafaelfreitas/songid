@@ -136,12 +136,12 @@
   </main>
 
   <footer class="pt-4 pb-1 text-left">
-    <span class="text-[10px] sm:text-xs text-white/30 font-mono tracking-widest uppercase">v 1.1</span>
+    <span class="text-[10px] sm:text-xs text-white/30 font-mono tracking-widest uppercase">v 1.2</span>
   </footer>
 
   <script>
     const AUDD_TOKEN = "33845092005c657325526d2fed45e5cb";
-    const RECORD_TIME_MS = 5000;
+    const RECORD_TIME_MS = 6000; // Increased to 6 seconds for better accuracy
 
     const colorThief = new ColorThief();
 
@@ -187,22 +187,23 @@
       }
     });
 
-    // --- HELPER FOR AUDIO FORMAT ON ANDROID ---
+    // --- HELPER FOR AUDIO FORMAT & FILE EXTENSION ---
 
-    function getSupportedMimeType() {
+    function getAudioRecordingConfig() {
       const types = [
-        'audio/webm',
-        'audio/webm;codecs=opus',
-        'audio/mp4',
-        'audio/ogg;codecs=opus',
-        'audio/aac'
+        { mime: 'audio/webm;codecs=opus', ext: 'webm' },
+        { mime: 'audio/webm', ext: 'webm' },
+        { mime: 'audio/mp4', ext: 'mp4' },
+        { mime: 'audio/aac', ext: 'aac' },
+        { mime: 'audio/ogg;codecs=opus', ext: 'ogg' }
       ];
+
       for (const type of types) {
-        if (MediaRecorder.isTypeSupported(type)) {
+        if (MediaRecorder.isTypeSupported(type.mime)) {
           return type;
         }
       }
-      return ''; // Default browser selection
+      return { mime: '', ext: 'webm' };
     }
 
     // --- DYNAMIC THEMES ---
@@ -235,16 +236,15 @@
       buttonWrapper.classList.add('listening-active');
       btnText.innerText = "Listening...";
       listenSubtitle.innerText = "Listening to ambient sound...";
-      btnListen.classList.add('border-indigo-500/80', 'bg-indigo-500/10');
-
       updateStatus('Listening...', 'bg-indigo-400 animate-ping');
 
-      const audioBlob = await recordAudio(RECORD_TIME_MS);
+      const audioData = await recordAudio(RECORD_TIME_MS);
 
-      if (!audioBlob) {
+      if (!audioData || !audioData.blob || audioData.blob.size === 0) {
         buttonWrapper.classList.remove('listening-active');
         btnText.innerText = "Listen";
-        btnListen.classList.remove('border-indigo-500/80', 'bg-indigo-500/10');
+        updateStatus('Mic Error', 'bg-rose-500');
+        listenSubtitle.innerText = "Could not record audio sample. Try again.";
         return;
       }
 
@@ -252,20 +252,18 @@
       listenSubtitle.innerText = "Processing audio sample...";
       updateStatus('Analyzing...', 'bg-amber-400 animate-pulse');
 
-      const song = await identifySongAudD(audioBlob);
+      const song = await identifySongAudD(audioData.blob, audioData.ext);
 
       if (song) {
         await displaySongData(song);
         updateStatus('Identified', 'bg-emerald-400');
       } else {
         updateStatus('Not recognized', 'bg-rose-500');
-        listenSubtitle.innerText = "Could not recognize the song. Please try again.";
-        setTimeout(() => updateStatus('Ready', 'bg-white/40'), 3000);
+        setTimeout(() => updateStatus('Ready', 'bg-white/40'), 4000);
       }
 
       buttonWrapper.classList.remove('listening-active');
       btnText.innerText = "Listen";
-      btnListen.classList.remove('border-indigo-500/80', 'bg-indigo-500/10');
     }
 
     // --- RECORDING ---
@@ -273,34 +271,41 @@
     function recordAudio(duration) {
       return new Promise((resolve) => {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          alert('Audio recording is not supported in this browser or environment (requires HTTPS).');
+          alert('Audio recording is not supported in this browser environment.');
           updateStatus('Not Supported', 'bg-rose-500');
           resolve(null);
           return;
         }
 
         isRecording = true;
+        const config = getAudioRecordingConfig();
+
         navigator.mediaDevices.getUserMedia({ audio: true })
           .then((stream) => {
-            const mimeType = getSupportedMimeType();
-            const options = mimeType ? { mimeType } : {};
+            const options = config.mime ? { mimeType: config.mime } : {};
             const mediaRecorder = new MediaRecorder(stream, options);
             const audioChunks = [];
 
             mediaRecorder.addEventListener('dataavailable', (event) => {
-              if (event.data.size > 0) audioChunks.push(event.data);
+              if (event.data && event.data.size > 0) {
+                audioChunks.push(event.data);
+              }
             });
 
             mediaRecorder.addEventListener('stop', () => {
               isRecording = false;
               stream.getTracks().forEach(track => track.stop());
-              const audioBlob = new Blob(audioChunks, { type: mimeType || 'audio/webm' });
-              resolve(audioBlob);
+              const audioBlob = new Blob(audioChunks, { type: config.mime || 'audio/webm' });
+              resolve({ blob: audioBlob, ext: config.ext });
             });
 
-            mediaRecorder.start();
+            // Pass 500ms timeslice to force frequent data events on Android
+            mediaRecorder.start(500);
+
             setTimeout(() => {
-              if (mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+              if (mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+              }
             }, duration);
           })
           .catch((err) => {
@@ -308,10 +313,10 @@
             isRecording = false;
 
             if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-              listenSubtitle.innerText = "Microphone permission denied. Please allow mic access in your browser settings.";
+              listenSubtitle.innerText = "Microphone permission denied. Please allow mic access in browser settings.";
               updateStatus('Mic Denied', 'bg-rose-500');
             } else {
-              listenSubtitle.innerText = "Error accessing microphone. Make sure you are using HTTPS.";
+              listenSubtitle.innerText = "Microphone error: " + err.message;
               updateStatus('Mic Error', 'bg-rose-500');
             }
 
@@ -322,10 +327,10 @@
 
     // --- APIS ---
 
-    async function identifySongAudD(audioBlob) {
+    async function identifySongAudD(audioBlob, fileExtension) {
       const formData = new FormData();
       formData.append('api_token', AUDD_TOKEN);
-      formData.append('file', audioBlob, 'audio_sample');
+      formData.append('file', audioBlob, `audio_sample.${fileExtension}`);
       formData.append('return', 'spotify');
 
       try {
@@ -341,10 +346,16 @@
             artist: data.result.artist,
             cover: data.result.spotify?.album?.images[0]?.url || 'https://via.placeholder.com/400?text=No+Cover'
           };
+        } else if (data.error) {
+          console.error('AudD Error:', data.error);
+          listenSubtitle.innerText = `API Error: ${data.error.error_message || 'Recognition failed.'}`;
+        } else {
+          listenSubtitle.innerText = "No match found. Try getting closer to the sound source.";
         }
         return null;
       } catch (err) {
-        console.error('AudD API error:', err);
+        console.error('AudD API request failed:', err);
+        listenSubtitle.innerText = "Network error while connecting to recognition server.";
         return null;
       }
     }
