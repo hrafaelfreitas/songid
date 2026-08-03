@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Song ID — Editorial Experience</title>
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0d0f12">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-color: #0d0f12;
+      --accent-color: #6366f1;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .font-serif-title {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    .font-lyrics {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      letter-spacing: -0.01em;
+    }
+
+    .accent-text {
+      color: var(--accent-color);
+    }
+
+    /* Otimização de Animação Leve para CPUs Antigas */
+    @keyframes pulse-wave {
+      0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+      }
+
+      100% {
+        transform: scale(1.4);
+        opacity: 0;
+      }
+    }
+
+    .listening-active .wave-1 {
+      animation: pulse-wave 2s infinite;
+    }
+
+    /* Custom Scrollbar */
+    .custom-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .custom-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body
+  class="text-slate-100 min-h-screen flex flex-col justify-between px-4 py-3 sm:px-8 sm:py-4 lg:px-10 max-w-[1920px] mx-auto select-none overflow-x-hidden">
+
+  <header class="flex justify-between items-center border-b border-white/10 pb-2.5">
+    <div class="flex items-center gap-4 sm:gap-6">
+      <h1 class="text-lg sm:text-xl tracking-[0.2em] font-light uppercase text-white/90">SONG<span
+          class="font-bold accent-text">.ID</span></h1>
+      <div id="status-badge"
+        class="flex items-center gap-2 text-[10px] sm:text-xs tracking-wider uppercase text-white/50 border border-white/10 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-white/5">
+        <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
+        <span id="status-text">Ready</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 w-full">
+
+    <div id="listen-screen"
+      class="flex flex-col items-center justify-center gap-8 py-16 min-h-[calc(100vh-140px)] text-center">
+      <div id="button-wrapper" class="relative flex items-center justify-center">
+        <div
+          class="wave-1 absolute w-44 h-44 sm:w-56 sm:h-56 rounded-full border border-indigo-500/40 opacity-0 pointer-events-none">
+        </div>
+
+        <button id="btn-listen"
+          class="relative z-10 w-44 h-44 sm:w-56 sm:h-56 rounded-full border border-white/20 hover:border-white/60 bg-white/5 active:scale-95 transition-all duration-300 flex flex-col items-center justify-center gap-3 cursor-pointer group shadow-2xl">
+          <svg id="mic-icon" xmlns="http://www.w3.org/2000/svg"
+            class="h-10 w-10 sm:h-12 sm:w-12 text-white/80 stroke-[1.5]" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 016 0v6a3 3 0 01-3 3z" />
+          </svg>
+          <span id="btn-text" class="font-light text-xs uppercase tracking-[0.25em] text-white/90">Listen</span>
+        </button>
+      </div>
+
+      <p id="listen-subtitle" class="text-xs sm:text-sm font-light text-white/50 max-w-sm leading-relaxed">
+        Tap the button to listen to the environment and identify the song.
+      </p>
+    </div>
+
+    <div id="result-screen"
+      class="hidden w-full mt-2 sm:mt-4 flex flex-col lg:flex-row gap-6 lg:gap-8 items-start justify-center h-[calc(100vh-120px)]">
+
+      <div class="w-full lg:w-4/12 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 pt-2">
+        <div class="relative group">
+          <img id="album-cover" crossorigin="anonymous" src="" alt="Album Cover"
+            class="w-44 h-44 sm:w-56 sm:h-56 lg:w-[300px] lg:h-[300px] xl:w-[340px] xl:h-[340px] rounded-lg shadow-2xl object-cover border border-white/10">
+        </div>
+
+        <div class="space-y-1 max-w-md">
+          <h2 id="song-title"
+            class="font-serif-title text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-white leading-snug line-clamp-2">
+            Title</h2>
+          <p id="artist-name" class="text-sm sm:text-base font-light text-white/70 tracking-wide line-clamp-1">Artist
+          </p>
+        </div>
+
+        <button id="btn-reset"
+          class="px-5 py-2 rounded-full border border-white/20 bg-white/5 active:bg-white/20 text-[10px] sm:text-xs uppercase tracking-widest text-white/80 transition duration-200 cursor-pointer">
+          Listen to another song
+        </button>
+      </div>
+
+      <div
+        class="w-full lg:w-8/12 h-full bg-white/5 rounded-xl p-5 sm:p-8 border border-white/10 overflow-y-auto custom-scroll flex flex-col">
+        <pre id="lyrics-text"
+          class="whitespace-pre-wrap font-lyrics text-base sm:text-lg lg:text-xl leading-relaxed text-white/90 font-light flex-1">Fetching lyrics...</pre>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="pt-4 pb-1 text-left">
+    <span class="text-[10px] sm:text-xs text-white/30 font-mono tracking-widest uppercase">v 1.4</span>
+  </footer>
+
+  <script>
+    const AUDD_TOKEN = "33845092005c657325526d2fed45e5cb";
+    const RECORD_TIME_MS = 6000;
+
+    // Elements
+    const buttonWrapper = document.getElementById('button-wrapper');
+    const btnListen = document.getElementById('btn-listen');
+    const btnText = document.getElementById('btn-text');
+    const btnReset = document.getElementById('btn-reset');
+    const listenSubtitle = document.getElementById('listen-subtitle');
+
+    const listenScreen = document.getElementById('listen-screen');
+    const resultScreen = document.getElementById('result-screen');
+    const statusText = document.getElementById('status-text');
+    const statusDot = document.getElementById('status-dot');
+
+    const albumCover = document.getElementById('album-cover');
+    const songTitle = document.getElementById('song-title');
+    const artistName = document.getElementById('artist-name');
+    const lyricsText = document.getElementById('lyrics-text');
+
+    let isRecording = false;
+
+    // --- EVENT LISTENERS ---
+
+    btnListen.addEventListener('click', () => {
+      if (!isRecording) startSingleRecognition();
+    });
+
+    btnReset.addEventListener('click', () => {
+      showListenScreen();
+    });
+
+    // --- HELPER FOR AUDIO CONFIG ---
+
+    function getAudioRecordingConfig() {
+      const types = [
+        { mime: 'audio/webm;codecs=opus', ext: 'webm' },
+        { mime: 'audio/webm', ext: 'webm' },
+        { mime: 'audio/mp4', ext: 'mp4' },
+        { mime: 'audio/aac', ext: 'aac' }
+      ];
+
+      for (const type of types) {
+        if (MediaRecorder.isTypeSupported(type.mime)) {
+          return type;
+        }
+      }
+      return { mime: '', ext: 'webm' };
+    }
+
+    // --- RECOGNITION ---
+
+    async function startSingleRecognition() {
+      showListenScreen();
+
+      buttonWrapper.classList.add('listening-active');
+      btnText.innerText = "Listening...";
+      listenSubtitle.innerText = "Listening to ambient sound...";
+      updateStatus('Listening...', 'bg-indigo-400 animate-ping');
+
+      const audioData = await recordAudio(RECORD_TIME_MS);
+
+      if (!audioData || !audioData.blob || audioData.blob.size === 0) {
+        buttonWrapper.classList.remove('listening-active');
+        btnText.innerText = "Listen";
+        updateStatus('Mic Error', 'bg-rose-500');
+        listenSubtitle.innerText = "Could not record audio. Check permissions.";
+        return;
+      }
+
+      btnText.innerText = "Analyzing...";
+      listenSubtitle.innerText = "Processing audio sample...";
+      updateStatus('Analyzing...', 'bg-amber-400 animate-pulse');
+
+      const song = await identifySongAudD(audioData.blob, audioData.ext);
+
+      if (song) {
+        await displaySongData(song);
+        updateStatus('Identified', 'bg-emerald-400');
+      } else {
+        updateStatus('Not recognized', 'bg-rose-500');
+        setTimeout(() => updateStatus('Ready', 'bg-white/40'), 4000);
+      }
+
+      buttonWrapper.classList.remove('listening-active');
+      btnText.innerText = "Listen";
+    }
+
+    // --- RECORDING ---
+
+    function recordAudio(duration) {
+      return new Promise((resolve) => {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          alert('Recording not supported.');
+          updateStatus('Not Supported', 'bg-rose-500');
+          resolve(null);
+          return;
+        }
+
+        isRecording = true;
+        const config = getAudioRecordingConfig();
+
+        const audioConstraints = {
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+            sampleRate: 44100
+          }
+        };
+
+        navigator.mediaDevices.getUserMedia(audioConstraints)
+          .then((stream) => {
+            const options = { audioBitsPerSecond: 128000 };
+            if (config.mime) options.mimeType = config.mime;
+
+            const mediaRecorder = new MediaRecorder(stream, options);
+            const audioChunks = [];
+
+            mediaRecorder.addEventListener('dataavailable', (event) => {
+              if (event.data && event.data.size > 0) audioChunks.push(event.data);
+            });
+
+            mediaRecorder.addEventListener('stop', () => {
+              isRecording = false;
+              stream.getTracks().forEach(track => track.stop());
+              const audioBlob = new Blob(audioChunks, { type: config.mime || 'audio/webm' });
+              resolve({ blob: audioBlob, ext: config.ext });
+            });
+
+            mediaRecorder.start(500);
+
+            setTimeout(() => {
+              if (mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+            }, duration);
+          })
+          .catch((err) => {
+            console.error('Mic Error:', err);
+            isRecording = false;
+            updateStatus('Mic Error', 'bg-rose-500');
+            resolve(null);
+          });
+      });
+    }
+
+    // --- APIS ---
+
+    async function identifySongAudD(audioBlob, fileExtension) {
+      const formData = new FormData();
+      formData.append('api_token', AUDD_TOKEN);
+      formData.append('file', audioBlob, `audio_sample.${fileExtension}`);
+      formData.append('return', 'spotify');
+
+      try {
+        const response = await fetch('https://api.audd.io/', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+
+        if (data.status === 'success' && data.result) {
+          return {
+            title: data.result.title,
+            artist: data.result.artist,
+            cover: data.result.spotify?.album?.images[0]?.url || 'https://via.placeholder.com/400?text=No+Cover'
+          };
+        } else {
+          listenSubtitle.innerText = "No match found. Try again closer to the speaker.";
+        }
+        return null;
+      } catch (err) {
+        console.error('AudD Error:', err);
+        listenSubtitle.innerText = "Network connection error.";
+        return null;
+      }
+    }
+
+    async function fetchLyrics(artist, title) {
+      try {
+        const url = `https://lrclib.net/api/get?artist_name=${encodeURIComponent(artist)}&track_name=${encodeURIComponent(title)}`;
+        const response = await fetch(url);
+        if (!response.ok) return "Lyrics not found for this track.";
+
+        const data = await response.json();
+        return data.plainLyrics || data.syncedLyrics || "Lyrics unavailable.";
+      } catch (err) {
+        return "Error loading lyrics.";
+      }
+    }
+
+    // --- UI ---
+
+    async function displaySongData(song) {
+      songTitle.innerText = song.title;
+      artistName.innerText = song.artist;
+      lyricsText.innerText = "Fetching lyrics...";
+      albumCover.src = song.cover;
+
+      showResultScreen();
+
+      const lyrics = await fetchLyrics(song.artist, song.title);
+      lyricsText.innerText = lyrics;
+    }
+
+    function updateStatus(text, dotColorClass) {
+      statusText.innerText = text;
+      statusDot.className = `w-1.5 h-1.5 rounded-full ${dotColorClass}`;
+    }
+
+    function showListenScreen() {
+      resultScreen.classList.add('hidden');
+      listenScreen.classList.remove('hidden');
+    }
+
+    function showResultScreen() {
+      listenScreen.classList.add('hidden');
+      resultScreen.classList.remove('hidden');
+    }
+  </script>
+</body>
+
+</html>
